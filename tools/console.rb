@@ -5,8 +5,6 @@ def reload
 end
 
 
-
-
 binding.pry
 
 puts "Mwahahaha!" # just in case pry is buggy and exits
