@@ -11,12 +11,20 @@ class Follower
         @@all
     end
    
-    def cults
+    def oaths
         BloodOath.all.select{|oath| oath.follower == self}
     end
 
+    def cults 
+        self.oaths.map{|oath| oath.cult}.uniq
+    end
+
     def join_cult(cult)
-        BloodOath.new(self, cult)
+        if self.age >= cult.minimum_age
+            BloodOath.new(self, cult)
+        else  
+            "Sorry kiddo, no cult for you"
+        end
     end
 
     def self.of_a_certain_age(age)
@@ -24,7 +32,7 @@ class Follower
     end
 
     def my_cults_slogans
-        self.cults.each{ |oath| puts oath.cult.slogan }
+        self.oaths.each{ |oath| puts oath.cult.slogan }
     end
 
     def self.most_active
@@ -35,5 +43,9 @@ class Follower
     def self.top_ten
         followers = BloodOath.all.map{|oath| oath.follower}
         followers.sort_by {|follower| followers.count(follower)}.uniq.reverse[0,9]
+    end
+
+    def fellow_cult_members
+        self.cults.map{|cult| cult.get_followers}.flatten().select{|follower| follower != self}
     end
 end
